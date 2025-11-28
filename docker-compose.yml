@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  mcp-server:
+    build: ./mcp-server
+    container_name: mcp-server
+    ports:
+      - "8989:8989"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - app-net
+    restart: unless-stopped
+
+  telegrambot:
+    build: ./telegrambot
+    container_name: telegrambot
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - mcp-server
+    networks:
+      - app-net
+    restart: unless-stopped
+
+#  mcp-inspector:
+#    build: ./inspector
+#    container_name: mcp-inspector
+#    ports:
+#      - "6274:6274"
+#      - "6277:6277"
+#    environment:
+#      DANGEROUSLY_OMIT_AUTH: "true"
+#    networks:
+#      - app-net
+#    restart: unless-stopped
+
+networks:
+  app-net:
+    driver: bridge
