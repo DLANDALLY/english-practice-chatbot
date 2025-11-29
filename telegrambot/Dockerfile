@@ -9,6 +9,7 @@ RUN ./mvnw -q -DskipTests package
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
+RUN apt-get update && apt-get install -y ffmpeg
 
 COPY --from=build /app/target/*.jar app.jar
 COPY .env /app/.env

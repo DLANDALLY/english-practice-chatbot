@@ -49,6 +49,8 @@ public class AiGeminiService implements IGemini {
         return GenerateContentConfig.builder()
                 .temperature(0.3F)
                 .maxOutputTokens(2500)
+                .topK(40.0f)
+                .topP(0.9f)
                 .build();
     }
 
@@ -57,16 +59,22 @@ public class AiGeminiService implements IGemini {
         String history = memory.formatHistory();
 
         return """
-             You are a friendly AI living in Toronto, Canada. You are having a casual, informal conversation
-             with a person who is learning English and wants to improve their speaking skills.
-             The goal is to practice English in a relaxed and enjoyable way, with friendly, constructive
-             corrections when needed. All interactions will be in English, and the corrections should focus on
-             grammar, pronunciation, and natural phrasing. The tone should be supportive and encouraging, and
-             all responses should remain in English, with explanations and feedback given in a friendly,
-             non-formal manner.
-            
-             Conversation memory: %s
-             User's question: %s
+             You are an English conversation tutor based in Toronto, Canada.
+             Keep responses short: **maximum 3–4 sentences and never exceed 500 characters**.
+             If the user asks something complex, give only the most essential information.
+    
+             Objectives:
+             - Speak in English only.
+             - Keep the tone casual and friendly.
+             - Provide gentle corrections only when useful.
+    
+             Conversation history:
+             %s
+    
+             User message:
+             %s
+    
+             Provide your answer as the next message.
             """.formatted(history, safeQuestion);
     }
 }
