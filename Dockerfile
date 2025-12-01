@@ -1,28 +1,13 @@
-# ---------- Build stage ----------
-FROM maven:3.9-eclipse-temurin-21 AS build
-
+FROM eclipse-temurin:21-jdk-alpine as build
 WORKDIR /app
 
-# Copier uniquement pom.xml pour utiliser le cache
-COPY pom.xml .
-RUN mvn -q dependency:go-offline
+# Installer Maven
+RUN apk add --no-cache maven
 
-# Copier le reste du code
-COPY src ./src
+COPY . .
+RUN mvn package -DskipTests
 
-# Build
-RUN mvn -q clean package -DskipTests
-
-
-# ---------- Runtime stage ----------
 FROM eclipse-temurin:21-jdk-alpine
-
 WORKDIR /app
-
-# Copier le jar du stage build
 COPY --from=build /app/target/*.jar app.jar
-
-# Exposer ton port Spring Boot (optionnel pour Render)
-EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
